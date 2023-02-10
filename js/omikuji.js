@@ -1,84 +1,88 @@
 "use strict";
 
+let n = ""; // ランダムにおみくじの内容を決定する変数
+let nBefore = ""; //前回の変数nの値
+
 window.addEventListener("DOMContentLoaded",
-    function(){
+    function() {
 
         $("header").textillate({
-            loop: false, // ループのオンオフ
-            minDisplayTime: 2000, // テキストが置き換えられるまでの表示時間
-            initialDelay: 2000, // 遅延時間
-            autoStart: true, // アニメーションを自動的にスタート
-            in: { // フェードインのエフェクトの詳細設定
-                effect: "fadeInLeftBig", // エフェクトの名前(animate.css参照)
-                delayScale: 1.5, // 遅延時間の指数
-                delay: 50, // 文字ごとの遅延時間
-                sync: false, // trueはアニメーションをすべての文字に同時に適用
-                shuffle: true // trueは文字を順番にではなく、ランダムに
+            loop: false, 
+            minDisplayTime: 2000, 
+            initialDelay: 2000, 
+            autoStart: true, 
+            in: { 
+            effect: "fadeInLeftBig", 
+            delayScale: 1.5, 
+            delay: 50, 
+            sync: false, 
+            shuffle: true 
             }
         });
-            // おみくじボタン(id="btn1") ボヤァと表示させる
         $(function(){
-                ScrollReveal().reveal("#btn1", { duration: 9000 });
-            });
-        setTimeout( 
-            function(){
-                let popmsg="いらっしゃい！おみくじ引いてって！";
-                window.alert(popmsg);
+            ScrollReveal().reveal("#btn1", { duration: 9000 });
+        });
 
-            },
-            "5000"
-        );
-    },false
+    }, false
 );
-   
-const btn1 = document.getElementById("btn1");
+
+const btn1= document.getElementById("btn1");
+const omikujiText = document.getElementById("omikujiText");
+const omikujiContent = document.getElementById("omikujiContent");
+const omikujiTextImage = document.getElementById("omikujiTextImage");
 btn1.addEventListener("click",
     function(){
-        // let n=Math.floor(Math.random()*3);
+        let resultText= ["大吉!!!!!","中吉!!!","小吉!!","末吉!","凶","大凶"];
+        let resultColor =["#ff0000", "#c71585","#ff7600","#ff69b4","#1e90ff","#1e1fff"];
+        let resultFontSize=["50px","48px","45px","40px","38px","35px"];
+        let resultTextImage = ["img/tanjiro1.png","img/tanjiro2.png","img/tanjiro3.png","img/tanjiro4.png","img/tanjiro5.png","img/tanjiro6.png"];
 
-        //switch(n){
-        //    case 0:
-        //        btn1.textContent="very Happy!!"
-        //        btn1.style.color="#FF0000";
-        //        btn1.style.fontSize="40px";
-        //        break;
-        //    case 1:
-        //        btn1.textContent="Happy!!"
-        //        btn1.style.color="#FF0001";
-        //        btn1.style.fontSize="30px";
-        //        break;
-        //    case 2:
-        //        btn1.textContent="UnHappy..."
-        //        btn1.style.color="#231e1c";
-        //        btn1.style.fontSize="20px";
-        //    break;
-        //} 
-        let resultText =["大吉!!!!","吉!!!!","中吉!!!","小吉!!","末吉!","凶.."];
-        let resultColor=["#ff0000","#c71585","#ff1493","#ff69b4","#ff8c00","#1e90ff"];
-        let resultFontSize = ["55px","50px","45px","40px","35px","30px"];
-        let resultMaxSpeed =[10,10,8,5,5,5];
-        let resultMaxSize =[30,30,20,15,20,20];
-        let resultImage=["img/star.png","img/sakura_hanabira.png","img/sakura_hanabira.png","img/sakura_hanabira.png","img/leaf.png","img/snowflakes.png"]
-        let n = Math.floor(Math.random() * resultText.length);
-        btn1.textContent = resultText[n];
-        btn1.style.color = resultColor[n];
-        btn1.style.fontSize = resultFontSize[n];
+        // let n =Math.floor(Math.random() * resultText.length);
+        while (n === nBefore){
+            n =Math.floor(Math.random() * resultText.length);
+        }
+        nBefore = n; //nの値をsave
 
-        // snowfall stop
+        let resultMaxSpeed=[5,5,1,1,1,5];
+        let resultMaxSize=[30,30,40,60,35,20];
+        let resultMinSize=[1,1,20,50,25,1];
+        let resultImage=["img/star.png","img/sakura_hanabira.png","img/butterfly1.png","img/candy1.png","img/water2.png","img/snowflakes.png"];
+        let resultSound = ["sound/kimetsu_sound1.mp3","sound/kimetsu_sound2.mp3","sound/kimetsu_sound3.mp3","sound/kimetsu_sound4.mp3","sound/kimetsu_sound5.mp3","sound/kimetsu_sound6.mp3"];
+
+        omikujiText.classList.remove("notDisplay");
+
+        omikujiContent.textContent = resultText[n];
+        omikujiContent.style.color= resultColor[n];
+        omikujiContent.style.fontSize= resultFontSize[n];
+
+        // おみくじのテキスト画像対応
+        omikujiTextImage.src =resultTextImage[n]; 
+        omikujiTextImage.classList.add("omikujiPaper");
+        //アニメーション終了時にclassを削除
+        omikujiTextImage.addEventListener("animationend",
+            function() {
+                omikujiTextImage.classList.remove("omikujiPaper");
+            }, false
+        );
+
+        // snowfall
         $(document).snowfall("clear");
-
-        // jQueryのsnowfall
         $(document).ready(function(){
             $(document).snowfall({
-            maxSpeed : resultMaxSpeed[n], // 最大速度
-            minSpeed : 1, // 最小速度
-            maxSize : resultMaxSize[n], // 最大サイズ
-            minSize : 7, // 最小サイズ
-            image :resultImage[n],
-             });
+                maxSpeed : resultMaxSpeed[n],
+                minSpeed : 1,
+                maxSize : resultMaxSize[n],
+                minSize : resultMinSize[n],
+                image : resultImage[n],
+            });
         });
-        
-    },false
+
+        // HTML5のaudioは一旦playをすると終了するまで音が鳴らない仕様である。
+        // これではクリックを連続で行った場合に、現在再生されている音が終了するまで
+        // 次の音が鳴らないため「currentTime」で開始時間をリセットする。
+        let music = new Audio(resultSound[n]);
+        music.currentTime = 0;
+        music.play();  // 再生
+
+    }, false
 );
-
-
